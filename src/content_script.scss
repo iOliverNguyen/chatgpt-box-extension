@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+}
+
+.boxgpt-container * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.boxgpt-active {
+  width: calc(100% - 400px);
+}
+
+.boxgpt-container {
+  display: none;
+}
+
+.boxgpt-active .boxgpt-container {
+  display: block;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "chatgpt-extension",
+  "version": "0.1.0",
+  "description": "ChatGPT Extension",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.4.0",
+    "@types/chrome": "^0.0.203",
+    "@types/node": "^18.11.10",
+    "@vitejs/plugin-legacy": "^2.3.1",
+    "eventsource-parser": "^0.0.5",
+    "sass": "^1.56.1",
+    "svelte": "^3.53.1",
+    "svelte-preprocess": "^4.10.7",
+    "terser": "^5.16.1",
+    "typescript": "^4.9.3",
+    "uuid": "^9.0.0",
+    "vite": "^3.2.4"
+  }
+}
