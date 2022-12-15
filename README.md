@@ -1,7 +1,7 @@
 # Browser extension
 
 This extension loads ChatGPT in the current tab, allowing you to use ChatGPT along your working session. Simply click
-the extension icon in your browser toolbar to activate ChatGPT or use the shortcut `Ctrl + \ `.
+the extension icon in your browser toolbar to activate ChatGPT or use the shortcut `Ctrl + \`, and you can even customize shortcut in the `chrome://extensions/shortcuts`
 
 ![screenshot](etc/screenshot.png)
 
