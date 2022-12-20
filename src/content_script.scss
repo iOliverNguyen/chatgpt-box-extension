@@ -22,6 +22,10 @@ body {
   display: block;
 }
 
+.boxgpt-message p {
+  margin: 16px 0;
+}
+
 .boxgpt-message code {
   font-family: monospace;
   background: #000;
