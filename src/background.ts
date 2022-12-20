@@ -60,7 +60,9 @@ async function doSSE(url, options, callback) {
 
 const cache = newSimpleCache(60 * 10);
 const keyAccessToken = 'accessToken';
-const keyMessageId = 'messageId';
+
+let conversationId = null;
+let lastMessageId = '';
 
 async function getAccessToken(): Promise<string> {
   if (cache.get(keyAccessToken)) {
@@ -87,7 +89,7 @@ async function getAnswer(msgId, question, callback) {
   } catch (error) {
     throw new Error('UNAUTHORIZED');
   }
-  const parentMessageId = cache.get(keyMessageId) || uuidv4();
+  const parentMessageId = lastMessageId || uuidv4();
 
   await doSSE('https://chat.openai.com/backend-api/conversation', {
     method: 'POST',
@@ -108,6 +110,7 @@ async function getAnswer(msgId, question, callback) {
         },
       ],
       model: 'text-davinci-002-render',
+      conversation_id: conversationId,
       parent_message_id: parentMessageId,
     }),
   }, (data) => {
@@ -116,7 +119,13 @@ async function getAnswer(msgId, question, callback) {
       return;
     }
     try {
-      callback(JSON.parse(data));
+      const msg = JSON.parse(data);
+      if (msg.message.id) {
+        conversationId = msg.conversation_id;
+        lastMessageId = msg.message.id;
+      }
+
+      callback(msg);
     } catch (error) {
       console.error(error);
       callback({error: error?.message || `${error}`});
