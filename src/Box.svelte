@@ -7,17 +7,17 @@
     </div>
     <div class="boxgpt-conversation" bind:this={conversationElem$}>
       <div class="boxgpt-messages">
-        {#each messages as message}
+        {#each messages as message, i}
           {#if message.type === 'user'}
             <div class="boxgpt-message boxgpt-message-user">
               <div class="boxgpt-message-text">
                 <div class="boxgpt-message-indicator">▶</div>
-                {renderMessage(message)}
+                {@html htmlMessages[i]}
               </div>
             </div>
           {:else}
             <div class="boxgpt-message boxgpt-message-gpt">
-              <div class="boxgpt-message-text">{renderMessage(message)}</div>
+              <div class="boxgpt-message-text">{@html htmlMessages[i]}</div>
             </div>
           {/if}
         {:else}
@@ -38,7 +38,8 @@
 {/if}
 
 <script lang="ts">
-  import {writable} from "svelte/store";
+  import {writable} from 'svelte/store';
+  import {Converter} from "showdown";
 
   // set to true to enable debugging: automatically disconnect port after a few seconds to simulate a disconnect
   const flagDebugging = false;
@@ -49,6 +50,7 @@
   let active = writable(null); // true, false, or null
   let prompt = '';
   let messages = [];
+  let htmlMessages = [];
 
   let conversationElem$;
 
@@ -178,7 +180,7 @@
     }
   }
 
-  function renderMessage(msg) {
+  function getMessageContent(msg) {
     return msg?.message?.content?.parts?.[0] || '';
   }
 
@@ -193,13 +195,23 @@
       for (let i = messages.length - 1; i >= 0; i--) {
         if (messages[i].message?.id === message.message?.id) {
           messages[i] = message;
+          htmlMessages[i] = markdownToHTML(getMessageContent(message));
+
           messages = messages;
           return;
         }
       }
     }
+
     messages.push(message);
+    htmlMessages.push(markdownToHTML(getMessageContent(message)));
     messages = messages.slice(-40);
+    htmlMessages = htmlMessages.slice(-40);
+  }
+
+  function markdownToHTML(input) {
+    const converter = new Converter();
+    return converter.makeHtml(input);
   }
 </script>
 

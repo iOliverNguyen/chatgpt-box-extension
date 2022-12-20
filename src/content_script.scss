@@ -21,3 +21,22 @@ body {
 .boxgpt-active .boxgpt-container {
   display: block;
 }
+
+.boxgpt-message code {
+  font-family: monospace;
+  background: #000;
+  padding: 2px 6px;
+}
+
+.boxgpt-message pre {
+  font-family: monospace;
+  background: #000;
+  padding: 10px 15px;
+  margin: 10px 0;
+
+  code {
+    padding: 0;
+  }
+}
+
+
