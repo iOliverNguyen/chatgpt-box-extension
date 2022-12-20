@@ -5,6 +5,12 @@ the extension icon in your browser toolbar to activate ChatGPT or use the shortc
 
 ![screenshot](etc/screenshot.png)
 
+## Latest Changes
+
+- Display markdown
+- Keep conversation context
+- Automatically scroll
+
 ## Installation
 
 Download and unzip the latest release from the [releases page](https://github.com/iOliverNguyen/chatgpt-extension/releases).
