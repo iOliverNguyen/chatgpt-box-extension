@@ -5,7 +5,7 @@
       <div class="space"></div>
       <div class="boxgpt-text">Ctrl + \ : ON/OFF</div>
     </div>
-    <div class="boxgpt-conversation">
+    <div class="boxgpt-conversation" bind:this={conversationElem$}>
       <div class="boxgpt-messages">
         {#each messages as message}
           {#if message.type === 'user'}
@@ -49,6 +49,8 @@
   let active = writable(null); // true, false, or null
   let prompt = '';
   let messages = [];
+
+  let conversationElem$;
 
   $: {
     if ($active) {
@@ -151,12 +153,20 @@
     tryPostMessage({type: 'meta', action: 'login'});
   }
 
+  function scrollToBottom() {
+    if (conversationElem$) {
+      conversationElem$.scrollTo(0, conversationElem$.scrollHeight);
+    }
+  }
+
   function handleTextInput(event) {
     if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
       event.preventDefault();
 
       postQuestion({question: prompt});
       prompt = '';
+
+      setTimeout(() => scrollToBottom(), 4);
     }
   }
 
@@ -173,6 +183,8 @@
   }
 
   function appendMessage(message) {
+    setTimeout(() => scrollToBottom(), 4);
+
     if (messages.at(-1)?.status === 'thinking') {
       messages.pop();
     }
