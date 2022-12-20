@@ -38,9 +38,12 @@
 {/if}
 
 <script lang="ts">
-  import {writable, Writable} from "svelte/store";
+  import {writable} from "svelte/store";
 
-  const port = chrome?.runtime?.connect();
+  // set to true to enable debugging: automatically disconnect port after a few seconds to simulate a disconnect
+  const flagDebugging = false;
+
+  let globalPort = chrome?.runtime?.connect();
 
   let authorized = writable(''); // authorized, unauthorized, or empty string
   let active = writable(null); // true, false, or null
@@ -54,7 +57,7 @@
       document.documentElement.classList.remove('boxgpt-active');
     }
     if ($active !== null) {
-      port.postMessage({type: 'meta', action: 'set-active', active: $active});
+      tryPostMessage({type: 'meta', action: 'set-active', active: $active});
     }
   }
   $: {
@@ -73,9 +76,23 @@
       $active = true;
     }
 
-    if (!port) {
+    if (!globalPort) {
       return;
     }
+    setupPort(globalPort);
+
+    if (flagDebugging) {
+      setTimeout(() => {
+        try {
+          globalPort.disconnect();
+        } finally {
+          console.debug('simulate port disconnected');
+        }
+      }, 3000);
+    }
+  }
+
+  function setupPort(port) {
     port.onMessage.addListener((msg) => {
       console.debug('received message', msg);
       if (msg.type === 'meta') {
@@ -98,6 +115,25 @@
     });
   }
 
+  async function tryPostMessage(msg) {
+    return new Promise((resolve) => {
+      const msgToPost = msg || {type: 'meta', action: 'ping'};
+      try {
+        globalPort.postMessage(msgToPost);
+      } catch (error) {
+        if (error.message?.includes('use a disconnected port')) {
+          // port is disconnected, reconnect
+          globalPort = chrome?.runtime?.connect();
+          setupPort(globalPort);
+          globalPort.postMessage(msgToPost);
+
+        } else {
+          throw error;
+        }
+      }
+    });
+  }
+
   function toggleBox() {
     $active = !$active;
     if ($active) {
@@ -112,7 +148,7 @@
   }
 
   function doLogin() {
-    port.postMessage({type: 'meta', action: 'login'});
+    tryPostMessage({type: 'meta', action: 'login'});
   }
 
   function handleTextInput(event) {
@@ -125,8 +161,8 @@
   }
 
   function postQuestion(data) {
-    if (port) {
-      port.postMessage(data);
+    if (globalPort) {
+      tryPostMessage(data);
     } else {
       console.debug('post question', data);
     }
