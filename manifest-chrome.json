@@ -18,7 +18,7 @@
       "run_at": "document_start"
     }
   ],
-  "description": "This extension loads ChatGPT in the current tab, allowing you to use ChatGPT along your working session. Simply click the extension icon in your browser toolbar to activate ChatGPT. ChatGPT is a powerful language model that uses deep learning to produce human-like responses to text input.",
+  "description": "This extension loads ChatGPT in the current tab, allowing you to use ChatGPT along your working session.",
   "host_permissions": [
     "https://*/*"
   ],
